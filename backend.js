@@ -290,3 +290,265 @@
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') pushCloudState(false); });
   window.addEventListener('DOMContentLoaded', init);
 })();
+
+/* ARC v12.2 — interaction router: important cards are actionable everywhere. */
+(() => {
+  const ROUTER_VERSION = '12.2';
+  const interactiveSelector = 'button,a,input,select,textarea,label,[contenteditable="true"],[onclick]';
+
+  function isNativeAction(target) {
+    return !!target?.closest?.(interactiveSelector);
+  }
+
+  function makeActionable(node, handler, label) {
+    if (!node || node.dataset.arcActionable === '1') return;
+    node.dataset.arcActionable = '1';
+    node.classList.add('arc-clickable');
+    if (!node.hasAttribute('tabindex')) node.tabIndex = 0;
+    if (!node.hasAttribute('role')) node.setAttribute('role', 'button');
+    if (label) node.setAttribute('aria-label', label);
+    node.addEventListener('click', (event) => {
+      if (isNativeAction(event.target)) return;
+      handler(event);
+    });
+    node.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      if (isNativeAction(event.target) && event.target !== node) return;
+      event.preventDefault();
+      handler(event);
+    });
+  }
+
+  function ensureStyle() {
+    if (document.getElementById('arc-v12-2-click-style')) return;
+    const style = document.createElement('style');
+    style.id = 'arc-v12-2-click-style';
+    style.textContent = `
+      .arc-clickable{cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+      .arc-clickable:hover{border-color:rgba(49,87,232,.32)!important;box-shadow:0 9px 26px rgba(27,31,42,.08)}
+      .arc-clickable:focus-visible{outline:3px solid rgba(49,87,232,.24);outline-offset:3px}
+      .arc-route-hint{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:10px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--blue)}
+      .arc-card-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+      .day-slot .arc-route-hint{display:block;margin-top:4px}
+      .science-card.arc-clickable .arc-route-hint{color:inherit;opacity:.68}
+      @media (hover:none){.arc-clickable:hover{transform:none;box-shadow:none}}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function addHint(node, text) {
+    if (!node || node.querySelector(':scope > .arc-route-hint')) return;
+    const hint = document.createElement('span');
+    hint.className = 'arc-route-hint';
+    hint.textContent = text;
+    node.appendChild(hint);
+  }
+
+  function planIndexById(planId) {
+    return (window.state?.plans || []).findIndex((plan) => plan.id === planId);
+  }
+
+  function editPlanFromAnywhere(planIndex, dayIndex = null) {
+    const plans = window.state?.plans || [];
+    const plan = plans[planIndex];
+    if (!plan || typeof window.editPlan !== 'function') {
+      if (typeof window.go === 'function') window.go('plans');
+      return;
+    }
+    if (typeof window.go === 'function') window.go('plans');
+    window.editPlan(planIndex);
+    if (Number.isInteger(dayIndex)) {
+      setTimeout(() => {
+        const days = document.querySelectorAll('#builderDays .builder-day');
+        const target = days[dayIndex];
+        if (!target) return;
+        target.scrollIntoView({behavior:'smooth', block:'center'});
+        target.animate?.([
+          {boxShadow:'0 0 0 0 rgba(49,87,232,0)'},
+          {boxShadow:'0 0 0 4px rgba(49,87,232,.18)'},
+          {boxShadow:'0 0 0 0 rgba(49,87,232,0)'}
+        ], {duration:900});
+      }, 90);
+    }
+  }
+
+  function editPlanById(planId, dayIndex = null) {
+    const index = planIndexById(planId);
+    if (index >= 0) editPlanFromAnywhere(index, dayIndex);
+    else if (typeof window.go === 'function') window.go('plans');
+  }
+
+  window.arcEditPlanFromAnywhere = editPlanFromAnywhere;
+  window.arcEditPlanById = editPlanById;
+
+  function wrapRender(name, decorator) {
+    const original = window[name];
+    if (typeof original !== 'function' || original.__arcV122Wrapped) return;
+    const wrapped = function(...args) {
+      const result = original.apply(this, args);
+      try { decorator(...args); } catch (error) { console.warn(`[ARC ${ROUTER_VERSION}] ${name} decoration`, error); }
+      return result;
+    };
+    wrapped.__arcV122Wrapped = true;
+    wrapped.__arcOriginal = original;
+    window[name] = wrapped;
+  }
+
+  function decorateTemplates(filter = 'all') {
+    const root = document.getElementById('templateGrid');
+    const templates = typeof TEMPLATES !== 'undefined' ? TEMPLATES : [];
+    if (!root || !Array.isArray(templates)) return;
+    const indices = templates.map((template, index) => ({template,index}))
+      .filter(({template}) => filter === 'all' || template.sport === filter)
+      .map(({index}) => index);
+    [...root.querySelectorAll('.template-card')].forEach((card, visibleIndex) => {
+      const templateIndex = indices[visibleIndex];
+      if (!Number.isInteger(templateIndex)) return;
+      const template = templates[templateIndex];
+      const name = window.lang?.() === 'de' ? template.nameDe : template.nameEn;
+      makeActionable(card, () => window.useTemplate?.(templateIndex), `${name}: ${window.lang?.()==='de'?'Vorlage bearbeiten':'edit template'}`);
+      addHint(card, window.lang?.()==='de' ? 'Anklicken → als Entwurf bearbeiten' : 'Click → edit as draft');
+    });
+  }
+
+  function decoratePlans() {
+    const root = document.getElementById('myPlans');
+    if (!root) return;
+    [...root.querySelectorAll('.plan-card')].forEach((card, index) => {
+      card.classList.add('arc-clickable');
+      card.dataset.arcPlanIndex = String(index);
+    });
+  }
+
+  function decorateTraining() {
+    const root = document.getElementById('myWorkouts');
+    if (!root || typeof window.flattenWorkouts !== 'function') return;
+    const workouts = window.flattenWorkouts();
+    [...root.querySelectorAll('.workout-card')].forEach((card, index) => {
+      const workout = workouts[index];
+      if (!workout) return;
+      makeActionable(card, () => editPlanFromAnywhere(workout.pi, workout.di), `${workout.day.name}: ${window.lang?.()==='de'?'Plan bearbeiten':'edit plan'}`);
+      addHint(card, window.lang?.()==='de' ? 'Karte anklicken → Plan bearbeiten' : 'Click card → edit plan');
+    });
+    const manualBox = document.getElementById('manualBox');
+    makeActionable(manualBox, () => {
+      if (typeof window.toggleManual === 'function') window.toggleManual();
+      setTimeout(() => document.getElementById('manualForm')?.scrollIntoView({behavior:'smooth',block:'nearest'}), 40);
+    }, window.lang?.()==='de'?'Manuelle Eingabe öffnen':'Open manual entry');
+  }
+
+  function decorateWeek() {
+    const root = document.getElementById('weekGrid');
+    if (!root) return;
+    const dayNodes = [...root.querySelectorAll('.day')];
+    dayNodes.forEach((dayNode, weekday) => {
+      const assignments = (window.state?.week || []).filter((item) => item.weekday === weekday);
+      const slots = [...dayNode.querySelectorAll('.day-slot')];
+      slots.forEach((slot, index) => {
+        const assignment = assignments[index];
+        if (!assignment) return;
+        makeActionable(slot, (event) => {
+          event.stopPropagation?.();
+          editPlanById(assignment.planId, assignment.dayIndex);
+        }, window.lang?.()==='de'?'Trainingstag im Plan bearbeiten':'Edit workout day in plan');
+        addHint(slot, window.lang?.()==='de' ? 'Plan bearbeiten →' : 'Edit plan →');
+      });
+      makeActionable(dayNode, () => window.openWeekPicker?.(weekday), `${dayNode.querySelector('h3')?.textContent || ''}: ${window.lang?.()==='de'?'Training hinzufügen':'add workout'}`);
+    });
+  }
+
+  function decorateDashboard() {
+    const de = window.lang?.() === 'de';
+    const metricRoutes = [
+      ['metricSessions', () => window.go?.('training'), de?'Trainings öffnen':'Open workouts'],
+      ['metricRpe', () => { window.go?.('training'); setTimeout(()=>document.getElementById('manualBox')?.scrollIntoView({behavior:'smooth'}),80); }, de?'Training & RPE öffnen':'Open training & RPE'],
+      ['metricWell', () => { window.go?.('training'); setTimeout(()=>document.getElementById('manualBox')?.scrollIntoView({behavior:'smooth'}),80); }, de?'Recovery-Eingabe öffnen':'Open recovery entry'],
+      ['metricPlans', () => window.go?.('plans'), de?'Pläne öffnen':'Open plans']
+    ];
+    metricRoutes.forEach(([id, handler, label]) => makeActionable(document.getElementById(id)?.closest('.card'), handler, label));
+
+    const todayCard = document.getElementById('todayHeadline')?.closest('.card');
+    makeActionable(todayCard, () => {
+      const today = typeof window.getTodayAssignments === 'function' ? window.getTodayAssignments()[0] : null;
+      if (today?.p) editPlanFromAnywhere((window.state?.plans || []).indexOf(today.p), today.di);
+      else window.go?.('week');
+    }, de?'Heutigen Plan bearbeiten':'Edit today’s plan');
+
+    const recoveryCard = document.querySelector('#dashboard .grid.g2 .card:not(.dark)');
+    makeActionable(recoveryCard, () => {
+      window.go?.('training');
+      setTimeout(()=>document.getElementById('manualBox')?.scrollIntoView({behavior:'smooth'}),80);
+    }, de?'Recovery erfassen':'Log recovery');
+
+    const next = typeof window.flattenWorkouts === 'function' ? window.flattenWorkouts().slice(0,6) : [];
+    [...document.querySelectorAll('#dashboardNext .workout-card')].forEach((card,index) => {
+      const workout = next[index];
+      if (!workout) return;
+      if (!card.querySelector('.arc-edit-plan-action')) {
+        const actions = document.createElement('div');
+        actions.className = 'arc-card-actions';
+        const edit = document.createElement('button');
+        edit.className = 'btn arc-edit-plan-action';
+        edit.textContent = de ? 'Plan bearbeiten' : 'Edit plan';
+        edit.onclick = (event) => { event.stopPropagation(); editPlanFromAnywhere(workout.pi, workout.di); };
+        actions.appendChild(edit);
+        card.appendChild(actions);
+      }
+      if (!card.hasAttribute('tabindex')) card.tabIndex = 0;
+      card.setAttribute('role','button');
+      card.classList.add('arc-clickable');
+      card.onkeydown = (event) => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); card.click(); }
+      };
+    });
+
+    document.querySelectorAll('#autoInsights .science-card').forEach((card) => {
+      makeActionable(card, () => window.openScienceBasis?.(), de?'Wissenschaftliche Basis öffnen':'Open evidence basis');
+      addHint(card, de ? 'Basis öffnen →' : 'Open evidence →');
+    });
+  }
+
+  function decorateBuilderDays() {
+    if (!window.state?.builder) return;
+    const days = window.state.builder.days || [];
+    days.forEach((day, dayIndex) => {
+      const blocks = [...document.querySelectorAll(`#builderBlocks${dayIndex} .block`)];
+      blocks.forEach((blockNode, blockIndex) => {
+        const block = day.blocks?.[blockIndex];
+        if (!block) return;
+        const visual = blockNode.querySelector('.block-visual');
+        makeActionable(visual, () => window.showExerciseDetail?.(block.exercise), `${window.exName?.(block.exercise)||block.exercise}: ${window.lang?.()==='de'?'Details öffnen':'open details'}`);
+      });
+    });
+  }
+
+  function decorateStaticShortcuts() {
+    const de = window.lang?.() === 'de';
+    const features = [...document.querySelectorAll('#plans .feature-mini')];
+    const handlers = [
+      () => { window.go?.('plans'); document.getElementById('myPlans')?.scrollIntoView({behavior:'smooth'}); },
+      () => { window.go?.('plans'); document.getElementById('templateGrid')?.scrollIntoView({behavior:'smooth'}); },
+      () => document.getElementById('planImportFile')?.click(),
+      () => window.go?.('training')
+    ];
+    const labels = de ? ['Eigene Pläne öffnen','Vorlagen öffnen','Plan importieren','Training öffnen'] : ['Open own plans','Open templates','Import plan','Open training'];
+    features.forEach((feature,index) => makeActionable(feature, handlers[index] || (()=>{}), labels[index] || ''));
+  }
+
+  function install() {
+    if (window.__ARC_INTERACTION_ROUTER_V122__) return;
+    window.__ARC_INTERACTION_ROUTER_V122__ = true;
+    ensureStyle();
+    wrapRender('renderTemplates', decorateTemplates);
+    wrapRender('renderPlans', decoratePlans);
+    wrapRender('renderTraining', decorateTraining);
+    wrapRender('renderWeek', decorateWeek);
+    wrapRender('renderDashboard', decorateDashboard);
+    wrapRender('renderBuilderDays', decorateBuilderDays);
+    decorateStaticShortcuts();
+    try { window.renderAll?.(); } catch (error) { console.warn(`[ARC ${ROUTER_VERSION}] initial render`, error); }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
+  else setTimeout(install, 0);
+})();
