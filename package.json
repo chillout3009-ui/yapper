@@ -1,6 +1,6 @@
 {
   "name": "arc-adaptive-training",
-  "version": "12.0.0",
+  "version": "12.3.0",
   "private": true,
   "description": "ARC – Adaptive Training",
   "scripts": {

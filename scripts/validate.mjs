@@ -77,5 +77,49 @@ try {
   fail(`Ungültiges JSON: ${error.message}`);
 }
 
+try {
+  const catalogMatch = html.match(/const EX=\[([\s\S]*?)\]\.map\(x=>\(\{id:x\[0\]/);
+  if (!catalogMatch) {
+    fail('Übungskatalog konnte nicht für den Visual-/Typ-Audit gelesen werden');
+  } else {
+    const catalog = [...catalogMatch[1].matchAll(/\['([a-z0-9_]+)','([^']*)','([^']*)','([^']*)','([^']*)'\]/g)]
+      .map(m => ({ id: m[1], catDe: m[4], catEn: m[5] }));
+    const strengthRows = ['row_cable', 'row_machine', 'row_bar', 'row_db'];
+    for (const id of strengthRows) {
+      const ex = catalog.find(x => x.id === id);
+      if (!ex) fail(`Fehlende Kraft-Ruderübung im Katalog: ${id}`);
+      if (/^(Rudern|Rowing)\s*·/.test(ex?.catDe || '') || /^(Rudern|Rowing)\s*·/.test(ex?.catEn || '')) {
+        fail(`Kraft-Ruderübung fälschlich als Ausdauer kategorisiert: ${id}`);
+      }
+    }
+    const buildBlockCode = html.match(/function buildBlock\(id,opts=\{\}\)\{[^\n]+\}/)?.[0] || '';
+    if (!buildBlockCode.includes('isEnduranceExercise(id)')) fail('buildBlock nutzt nicht die explizite Ausdauer-Klassifikation');
+    if (!html.includes("const ROW_STRENGTH_IDS=new Set(['row_cable','row_machine','row_bar','row_db'])")) fail('Schutzliste für Kraft-Ruderübungen fehlt');
+    if (!html.includes('repairExerciseBlockKinds')) fail('Migration für bereits falsch gespeicherte Ruderblöcke fehlt');
+
+    const visualText = fs.readFileSync(path.join(root, 'exercise-visuals-v11.js'), 'utf8');
+    const handlerMatch = visualText.match(/const handlers=\{([\s\S]*?)\n\s*\};/);
+    const handlerIds = new Set();
+    if (handlerMatch) {
+      for (const m of handlerMatch[1].matchAll(/(?:^|[,\n]\s*)(?:'([^']+)'|([A-Za-z0-9_]+))\s*:/g)) handlerIds.add(m[1] || m[2]);
+    }
+    const enduranceCategory = /^(Laufen|Running|Schwimmen|Swimming|Fahrrad|Cycling|Skaten|Skating|Rudern|Rowing|Wandern|Hiking)\s*·/;
+    const compoundVisualIds = new Set(['chest_press', 'skater_hop', 'landmine_rot', 'cable_woodchop']);
+    const missingVisuals = catalog
+      .filter(x => !enduranceCategory.test(x.catDe) && !enduranceCategory.test(x.catEn))
+      .map(x => x.id)
+      .filter(id => !handlerIds.has(id) && !compoundVisualIds.has(id) && !id.startsWith('emom_'));
+    if (missingVisuals.length) fail(`Übungen ohne spezifische Darstellung: ${missingVisuals.join(', ')}`);
+    else ok(`Visual-Coverage: ${catalog.length} Katalogeinträge geprüft`);
+
+    const cardioText = fs.readFileSync(path.join(root, 'cardio-visuals-v12.js'), 'utf8');
+    if (!cardioText.includes("const sport=cardioSport(id)")) fail('Cardio-Visuals nutzen nicht die explizite Sportzuordnung');
+    if (cardioText.includes("startsWith('row_') &&")) fail('Legacy-Ruder-Prefix-Logik in Cardio-Visuals gefunden');
+    ok('Ruder-Klassifikation und Visual-Routing geprüft');
+  }
+} catch (error) {
+  fail(`Visual-/Typ-Audit fehlgeschlagen: ${error.message}`);
+}
+
 if (failed) process.exit(1);
 console.log('\nARC-Validierung erfolgreich.');

@@ -81,14 +81,15 @@
   function hiker(x=91,y=48,pack=false,poles=true,scale=1){let s=`<g transform="translate(${x} ${y}) scale(${scale})">`+circ(0,0,6,C.ink,3)+p('M1 7L5 34',C.ink,4)+p('M4 18L-12 31',C.ink,4)+p('M5 18L21 31',C.ink,4)+p('M5 34L-8 61L-24 82',C.ink,4)+p('M5 34L22 59L38 79',C.ink,4);if(pack)s+=`<rect x="-12" y="13" width="15" height="25" rx="4" fill="#dbe2ea" stroke="${C.equip}" stroke-width="2"/>`;if(poles)s+=p('M-12 31L-28 86',C.equip,2.5)+p('M21 31L37 86',C.equip,2.5);return s+`</g>`;}
   function hikingArt(id){const badge=visualBadge(id),name=exName(id);let scene='';if(id==='hike_hills'){scene=p('M16 132L305 73',C.equip,3)+hiker(95,48,false,true,.86)+hiker(211,34,false,true,.72)+arrow(144,107,236,87);}else{scene=l(16,130,305,130,C.equip,3)+hiker(94,48,id==='hike_loaded',true,.86)+hiker(207,48,id==='hike_loaded',true,.72);if(id==='hike_long')scene+=tx(255,43,lang()==='de'?'längere Dauer':'long duration',8,C.muted,850);if(id==='hike_recovery')scene+=tx(255,43,lang()==='de'?'sehr locker':'very easy',8,C.green,850);}return frame(scene,badge,name,C.trail);}
 
-  const CARDIO_PREFIX=['run_','swim_','bike_','skate_','row_','hike_'];
+  const cardioSport=id=>typeof enduranceSportForExercise==='function'?enduranceSportForExercise(id):null;
   window.exerciseArt=function(id){
-    if(String(id).startsWith('run_'))return runningArt(id);
-    if(String(id).startsWith('swim_'))return swimmingArt(id);
-    if(String(id).startsWith('bike_'))return cyclingArt(id);
-    if(String(id).startsWith('skate_'))return skatingArt(id);
-    if(String(id).startsWith('row_') && !['row_cable','row_machine','row_bar','row_db'].includes(id))return rowingArt(id);
-    if(String(id).startsWith('hike_'))return hikingArt(id);
+    const sport=cardioSport(id);
+    if(sport==='running')return runningArt(id);
+    if(sport==='swimming')return swimmingArt(id);
+    if(sport==='cycling')return cyclingArt(id);
+    if(sport==='skating')return skatingArt(id);
+    if(sport==='rowing')return rowingArt(id);
+    if(sport==='hiking')return hikingArt(id);
     return oldArt(id);
   };
 
