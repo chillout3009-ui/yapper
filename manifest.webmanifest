@@ -1,0 +1,11 @@
+{
+  "name": "ARC – Adaptive Training",
+  "short_name": "ARC",
+  "description": "Sportartenübergreifende Trainingsplanung, Tracking, Timer und evidenzbasierte Trainingshinweise.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f0e7",
+  "theme_color": "#f4f0e7",
+  "lang": "de"
+}
