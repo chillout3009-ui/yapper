@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f4f0e7">
-<link rel="manifest" href="manifest.webmanifest"><title>ARC v11 — Adaptive Training</title>
+<link rel="manifest" href="manifest.webmanifest"><title>ARC v12.1 — Adaptive Training</title>
 <style>
 :root{--bg:#f4f0e7;--panel:#fffdf8;--ink:#14161a;--muted:#6e737b;--line:#d9d3c7;--blue:#3157e8;--sky:#dfe8ff;--lime:#c9f55d;--orange:#ff825f;--violet:#8b78ff;--green:#16795a;--red:#b5453a;--shadow:0 15px 40px rgba(20,22,26,.08);--r:20px}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,select,textarea{font:inherit;color:inherit}.app{display:grid;grid-template-columns:235px 1fr;min-height:100vh}.side{position:sticky;top:0;height:100vh;padding:22px 16px;border-right:1px solid var(--line);display:flex;flex-direction:column;background:rgba(244,240,231,.96);backdrop-filter:blur(14px);z-index:20}.brand{font-size:28px;font-weight:900;letter-spacing:-.05em}.brand span{display:inline-grid;width:31px;height:31px;border:2px solid var(--ink);border-radius:50%;place-items:center;margin-right:8px}.brand span:after{content:"";width:8px;height:8px;background:var(--blue);border-radius:50%}.tagline{font-size:12px;color:var(--muted);margin:7px 2px 22px}.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:12px;font-weight:700;color:#4d5159}.nav button.active{background:var(--ink);color:#fff}.side-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:14px}.sync{font-size:12px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#c69b31;margin-right:6px}.sync[data-ok="1"] .dot{background:var(--green)}
@@ -43,6 +43,39 @@ main{padding:27px 32px 80px;max-width:1500px;width:100%;margin:auto}.top{display
 .timer-mode-grid{grid-template-columns:repeat(5,minmax(0,1fr))}.timer-modal-v10{max-width:860px!important}.timer-definition{background:#f6f8fb;border:1px solid #e0e5ee;border-radius:14px;padding:12px;margin:12px 0;font-size:12px;line-height:1.5}.timer-main-grid{display:grid;grid-template-columns:1fr 300px;gap:16px}.timer-big{font-size:68px;font-weight:950;letter-spacing:-.055em;line-height:1;text-align:center;margin:14px 0}.timer-phase-v10{text-align:center;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#5c6675}.timer-transport{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.timer-transport button{min-height:46px}.phase-list{max-height:320px;overflow:auto}.phase-item{display:grid;grid-template-columns:30px 1fr auto;gap:8px;align-items:center;padding:9px;border-bottom:1px solid #eceef2;font-size:12px}.phase-item.active{background:#edf2ff;border-radius:10px}.phase-dot{width:10px;height:10px;border-radius:50%;background:#a8b0bd}.phase-item.active .phase-dot{background:#3157e8}.lap-list{max-height:160px;overflow:auto;font-size:12px}.lap{display:flex;justify-content:space-between;padding:6px;border-bottom:1px solid #eceef2}.timer-config-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.toggle-line{display:flex;gap:8px;align-items:center}.manual-phase{color:#9a6500;font-weight:800}.timer-warning{padding:9px 10px;background:#fff6df;border:1px solid #f1d692;border-radius:10px;font-size:11px;line-height:1.4}.timer-science{font-size:11px;color:#687386;line-height:1.45}
 .wo-timerbar{overflow-x:auto}.wo-timer-chip{white-space:nowrap}.auto-advice-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.auto-advice-chip{padding:9px;border-radius:12px;background:#151a21;border:1px solid #333b47;color:#d7dee8;font-size:11px}.auto-advice-chip b{display:block;color:#fff;margin-bottom:2px}
 @media(max-width:900px){.plan-editor-grid,.timer-main-grid{grid-template-columns:1fr}.plan-editor-side{position:static}.plan-overview{grid-template-columns:repeat(2,1fr)}.timer-mode-grid{grid-template-columns:repeat(2,1fr)}.timer-config-grid{grid-template-columns:repeat(2,1fr)}.auto-advice-strip{grid-template-columns:1fr}}
+/* v12.1 overlay/layout fixes */
+.modal-back{height:100dvh;overflow-y:auto;overscroll-behavior:contain;align-items:flex-start;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));-webkit-overflow-scrolling:touch}
+.modal{margin:auto;max-height:calc(100dvh - 28px);overscroll-behavior:contain;scrollbar-gutter:stable}
+.plan-editor-modal{display:flex;flex-direction:column}
+.draft-savebar{bottom:-1px;margin:14px -20px -20px;padding:12px 20px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -12px 28px rgba(20,22,26,.08)}
+.workout-overlay{height:100dvh;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.workout-shell{min-height:100dvh;padding-bottom:env(safe-area-inset-bottom)}
+.workout-top{padding-top:calc(18px + env(safe-area-inset-top));padding-left:calc(18px + env(safe-area-inset-left));padding-right:calc(18px + env(safe-area-inset-right))}
+.workout-bottom{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+@media(max-width:720px){
+ .modal-back{padding:0;display:block}
+ .modal{width:100vw!important;max-width:none!important;height:100dvh;max-height:none;border:0;border-radius:0;margin:0;padding:calc(14px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));box-shadow:none}
+ .plan-editor-modal{width:100vw!important}
+ .plan-editor-grid,.form2,.form3,.scan-row{grid-template-columns:1fr}
+ .plan-overview{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .draft-savebar{margin:14px calc(-14px - env(safe-area-inset-right)) calc(-14px - env(safe-area-inset-bottom)) calc(-14px - env(safe-area-inset-left));padding:12px calc(14px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));z-index:12}
+ .draft-savebar>.row{align-items:stretch;gap:8px}
+ .draft-savebar>.row>.row{width:100%;display:grid;grid-template-columns:1fr 1fr}
+ .draft-savebar .btn{width:100%}
+ .workout-shell{max-width:none}
+ .workout-top{padding-top:calc(12px + env(safe-area-inset-top));padding-left:calc(12px + env(safe-area-inset-left));padding-right:calc(12px + env(safe-area-inset-right))}
+ .workout-hero{padding:14px 12px 8px}
+ .workout-clock{font-size:clamp(48px,16vw,64px)}
+ .focus-card{margin:10px 10px;border-radius:18px}
+ .focus-art{height:155px}
+ .focus-copy{padding:14px}
+ .workout-nav{padding:8px 10px 12px;grid-template-columns:1fr}
+ .workout-bottom{padding:12px 10px calc(16px + env(safe-area-inset-bottom))}
+ .wo-timerbar{padding-left:10px;padding-right:10px}
+ .wo-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .wo-metric{padding:8px;min-width:0}.wo-metric input{font-size:18px}
+}
+@media(max-width:420px){.plan-overview{grid-template-columns:1fr 1fr}.block-edit-grid{grid-template-columns:1fr}.wo-metrics{grid-template-columns:1fr}.workout-sub{gap:8px 12px}.focus-copy h2{font-size:22px}}
 </style>
 </head>
 <body>
@@ -167,7 +200,7 @@ function normalizeStateV5(s){
   return n;
 }window.normalizeStateV5=normalizeStateV5;
 window.state=normalizeStateV5(JSON.parse(localStorage.getItem('arcStateV5')||localStorage.getItem('arcState')||'null'));
-function persist(){localStorage.setItem('arcStateV5',JSON.stringify(state));if(window.ARC_BACKEND)window.ARC_BACKEND.queue();renderDashboard();}window.persist=persist;
+function persist(){localStorage.setItem('arcStateV5',JSON.stringify(state));renderDashboard();}window.persist=persist;
 function lang(){return state.settings?.language||'de'}function exName(id){const x=EX.find(e=>e.id===id);return x?(lang()==='de'?x.de:x.en):id}function sportName(id){const s=SPORTS.find(x=>x[0]===id);return s?(lang()==='de'?s[1]:s[2]):id}function dayNames(){return DAYS[lang()]}
 function applyI18n(){document.documentElement.lang=lang();document.querySelectorAll('[data-i18n]').forEach(n=>n.textContent=t(n.dataset.i18n));document.querySelectorAll('[data-ph]').forEach(n=>n.placeholder=t(n.dataset.ph));langDe.classList.toggle('active',lang()==='de');langEn.classList.toggle('active',lang()==='en');renderAll();}
 function setLanguage(l){state.settings=state.settings||{};state.settings.language=l;persist();applyI18n()}window.setLanguage=setLanguage;
@@ -256,7 +289,7 @@ function addBuilderDay(){state.builder.days.push({name:`${t('workout')} ${state.
 function openBlockPicker(di){const sport=state.builder.days[di].sport||state.builder.sport;const endurance=SPORT_BLOCKS[sport]||[];const relevant=EX.filter(e=>sport==='gym'?/(Gym|Gerät|Freihantel|Kabel|Core|Calisthenics)/.test(e.catDe):sport==='calisthenics'?/Calisthenics|Core|Reha/.test(e.catDe):sport==='crossfit'?/CrossFit|Freihantel|Calisthenics|Carry|Conditioning/.test(e.catDe):sport==='rehab'?/Reha|Core/.test(e.catDe):sport==='mobility'?/Mobility|Reha/.test(e.catDe):endurance.some(x=>x[0]===e.id));modalRoot.innerHTML=`<div class="modal-back"><div class="modal"><div class="row between"><div><h2>${t('add_block')}</h2><div class="small muted">${lang()==='de'?'Wähle eine Übung oder einen Ausdauerbaustein. Das Bild hilft bei unklaren Namen.':'Choose an exercise or endurance block. The image helps when names are unfamiliar.'}</div></div><button class="btn" onclick="renderBuilderModal()">×</button></div><div class="field" style="margin-top:10px"><input id="blockSearch" class="input" placeholder="${lang()==='de'?'Übung suchen …':'Search exercise …'}" oninput="filterBlockPicker(${di},this.value)"></div><div id="blockPickerGrid" class="picker-grid" style="margin-top:12px">${relevant.map(e=>blockPickerCard(di,e)).join('')}</div></div></div>`;window._blockPickerRelevant=relevant}
 function blockPickerCard(di,e){return `<button class="picker-card" data-search="${(e.de+' '+e.en+' '+e.catDe+' '+e.catEn).toLowerCase()}" onclick="pickBlock(${di},'${e.id}')"><div class="exercise-visual">${exerciseArt(e.id)}</div><div class="picker-copy"><b>${exName(e.id)}</b><small>${lang()==='de'?e.catDe:e.catEn}</small></div></button>`}function filterBlockPicker(di,q){q=String(q||'').toLowerCase();document.querySelectorAll('#blockPickerGrid .picker-card').forEach(x=>x.classList.toggle('hidden',q&&!x.dataset.search.includes(q)))}
 function pickBlock(di,id){const def=(SPORT_BLOCKS[state.builder.days[di].sport||state.builder.sport]||[]).find(x=>x[0]===id);state.builder.days[di].blocks.push(buildBlock(id,{prescription:def?.[1],intensity:def?.[2]}));renderBuilderModal()}
-function saveBuilder(){const b=state.builder;b.name=document.getElementById('builderName')?.value||b.name;if(b._index!==undefined){const idx=b._index;delete b._index;state.plans[idx]=b}else{b.id=b.id||crypto.randomUUID();state.plans.push(b)}state.builder=null;persist();closeModal();renderPlans();renderTraining();alert(t('plan_saved'))}
+function saveBuilder(){const draft=state.builder;if(!draft)return;draft.name=(document.getElementById('builderName')?.value||draft.name||'Plan').trim()||'Plan';const idx=Number.isInteger(draft._index)?draft._index:null;const saved=JSON.parse(JSON.stringify(draft));delete saved._index;delete saved._draftSource;saved.id=saved.id||crypto.randomUUID();saved.createdAt=saved.createdAt||Date.now();if(idx!==null)state.plans[idx]=saved;else state.plans.push(saved);state.builder=null;try{persist()}catch(err){console.error('ARC plan save failed',err);state.builder=draft;alert(lang()==='de'?'Plan konnte nicht gespeichert werden. Bitte Seite neu laden und erneut versuchen.':'Plan could not be saved. Please reload the page and try again.');return}closeModal();renderPlans();renderTraining();alert(t('plan_saved'))}
 function closeModal(){modalRoot.innerHTML=''}
 function generateLocalPlan(){const goal=genGoal.value,days=+genDays.value;const selected=[...document.querySelectorAll('#genSports .chip.active')].map(x=>x.dataset.sport);const sports=selected.length?selected:['gym'];let chosen=[];for(let i=0;i<days;i++){const sp=sports[i%sports.length];const tp=TEMPLATES.find(x=>x.sport===sp)||TEMPLATES[0];const p=templateToPlan(tp);chosen.push(p.days[i%p.days.length])}const name=(lang()==='de'?`Automatischer ${goal==='hybrid'?'Hybrid-':' '}Plan`:`Automatic ${goal==='hybrid'?'Hybrid ':''}Plan`).trim();state.plans.push({id:crypto.randomUUID(),name,sport:sports.length>1?'gym':sports[0],days:chosen,createdAt:Date.now()});persist();renderPlans();renderTraining();alert(t('plan_saved'))}
 function renderGenSports(){genSports.innerHTML=SPORTS.map((s,i)=>`<button class="chip ${i<2?'active':''}" data-sport="${s[0]}" onclick="this.classList.toggle('active')">${sportName(s[0])}</button>`).join('')}
