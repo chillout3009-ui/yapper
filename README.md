@@ -43,10 +43,18 @@ Der Supabase Publishable Key in `config.js` ist für den Browser bestimmt. Priva
 
 ## Aktueller Stand
 
-Basis: ARC v12. Die vorhandene Plattformfunktionalität wurde für die GitHub-Vorbereitung nicht fachlich umgebaut; ergänzt wurden Repository-, Deployment- und Validierungsdateien sowie das zuvor fehlende Web-App-Manifest.
+Basis: ARC v13. Die vorhandene Plattformfunktionalität wurde für die GitHub-Vorbereitung nicht fachlich umgebaut; ergänzt wurden Repository-, Deployment- und Validierungsdateien sowie das zuvor fehlende Web-App-Manifest.
 
 ## v12.3
 - Kraft-Ruderübungen (Kabel, Maschine, Langhantel, Kurzhantel) sind explizit Strength-Blöcke mit Sätzen/Wdh./RPE.
 - Bereits falsch gespeicherte Ruderblöcke werden beim Laden automatisch repariert.
 - Ruder-Visuals unterscheiden Cable Row, Row Machine, Barbell Row, Dumbbell Row und Inverted Row deutlicher.
 - Visual-Audit prüft alle Katalogeinträge auf eine spezifische Darstellung.
+
+
+## ARC v13
+- Klarere Informationshierarchie und mobile Bedienung
+- Datenbasierte 7-Tage-Grafiken im Dashboard
+- Übersichtlichere Plan- und Workout-Karten mit Zeit-/Blockzusammenfassung
+- Aufgeräumter Wochenplan und fokussierter Live-Workout-Modus
+- Visuelle Exercise-Cards mit konsistenterem Kontrast und Tiefe
