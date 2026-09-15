@@ -43,7 +43,7 @@ Der Supabase Publishable Key in `config.js` ist für den Browser bestimmt. Priva
 
 ## Aktueller Stand
 
-Basis: ARC v13. Die vorhandene Plattformfunktionalität wurde für die GitHub-Vorbereitung nicht fachlich umgebaut; ergänzt wurden Repository-, Deployment- und Validierungsdateien sowie das zuvor fehlende Web-App-Manifest.
+Basis: ARC v13.1. Die vorhandene Plattformfunktionalität wurde für die GitHub-Vorbereitung nicht fachlich umgebaut; ergänzt wurden Repository-, Deployment- und Validierungsdateien sowie das zuvor fehlende Web-App-Manifest.
 
 ## v12.3
 - Kraft-Ruderübungen (Kabel, Maschine, Langhantel, Kurzhantel) sind explizit Strength-Blöcke mit Sätzen/Wdh./RPE.
@@ -58,3 +58,12 @@ Basis: ARC v13. Die vorhandene Plattformfunktionalität wurde für die GitHub-Vo
 - Übersichtlichere Plan- und Workout-Karten mit Zeit-/Blockzusammenfassung
 - Aufgeräumter Wochenplan und fokussierter Live-Workout-Modus
 - Visuelle Exercise-Cards mit konsistenterem Kontrast und Tiefe
+
+
+## ARC v13.1
+- Trainingsseite deutlich reduziert: Einheiten zuerst, Timer und manuelle Eingabe sekundär.
+- Live-Workout kann während der Einheit um Sätze und Übungen erweitert oder gekürzt werden.
+- Satztracking fragt standardmäßig nur Gewicht, Wiederholungen und Erledigt ab.
+- Session-RPE, Wohlbefinden und Schmerz werden ausschließlich einmal beim Beenden erfasst.
+- Optional können Live-Änderungen beim Abschluss in den zugrunde liegenden Plan übernommen werden.
+- Dashboard-Kennzahlen und Startseitenaktionen haben explizite Ziele; Erholungswerte öffnen einen Verlauf statt ein zusätzliches Check-in-Formular.

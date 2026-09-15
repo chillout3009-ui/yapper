@@ -427,8 +427,7 @@
     [...root.querySelectorAll('.workout-card')].forEach((card, index) => {
       const workout = workouts[index];
       if (!workout) return;
-      makeActionable(card, () => editPlanFromAnywhere(workout.pi, workout.di), `${workout.day.name}: ${window.lang?.()==='de'?'Plan bearbeiten':'edit plan'}`);
-      addHint(card, window.lang?.()==='de' ? 'Karte anklicken → Plan bearbeiten' : 'Click card → edit plan');
+      makeActionable(card, () => window.startWorkout?.(workout.pi, workout.di), `${workout.day.name}: ${window.lang?.()==='de'?'Training starten':'start workout'}`);
     });
     const manualBox = document.getElementById('manualBox');
     makeActionable(manualBox, () => {
@@ -461,8 +460,8 @@
     const de = window.lang?.() === 'de';
     const metricRoutes = [
       ['metricSessions', () => window.go?.('training'), de?'Trainings öffnen':'Open workouts'],
-      ['metricRpe', () => { window.go?.('training'); setTimeout(()=>document.getElementById('manualBox')?.scrollIntoView({behavior:'smooth'}),80); }, de?'Training & RPE öffnen':'Open training & RPE'],
-      ['metricWell', () => { window.go?.('training'); setTimeout(()=>document.getElementById('manualBox')?.scrollIntoView({behavior:'smooth'}),80); }, de?'Recovery-Eingabe öffnen':'Open recovery entry'],
+      ['metricRpe', () => window.openSessionHistory?.('load'), de?'Trainingsverlauf öffnen':'Open training history'],
+      ['metricWell', () => window.openSessionHistory?.('recovery'), de?'Erholungsverlauf öffnen':'Open recovery history'],
       ['metricPlans', () => window.go?.('plans'), de?'Pläne öffnen':'Open plans']
     ];
     metricRoutes.forEach(([id, handler, label]) => makeActionable(document.getElementById(id)?.closest('.card'), handler, label));
@@ -475,10 +474,7 @@
     }, de?'Heutigen Plan bearbeiten':'Edit today’s plan');
 
     const recoveryCard = document.querySelector('#dashboard .grid.g2 .card:not(.dark)');
-    makeActionable(recoveryCard, () => {
-      window.go?.('training');
-      setTimeout(()=>document.getElementById('manualBox')?.scrollIntoView({behavior:'smooth'}),80);
-    }, de?'Recovery erfassen':'Log recovery');
+    makeActionable(recoveryCard, () => window.openSessionHistory?.('recovery'), de?'Erholungsverlauf öffnen':'Open recovery history');
 
     const next = typeof window.flattenWorkouts === 'function' ? window.flattenWorkouts().slice(0,6) : [];
     [...document.querySelectorAll('#dashboardNext .workout-card')].forEach((card,index) => {

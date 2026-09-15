@@ -121,5 +121,29 @@ try {
   fail(`Visual-/Typ-Audit fehlgeschlagen: ${error.message}`);
 }
 
+
+
+// ARC v13.1 workout UX regression checks
+const requiredV131 = [
+  'startFreeWorkout',
+  'openWorkoutExercisePicker',
+  'addWorkoutSet',
+  'removeWorkoutSet',
+  'requestFinishWorkout',
+  'saveFinishedWorkout',
+  'openSessionHistory'
+];
+for (const name of requiredV131) {
+  if (!html.includes(name)) fail(`ARC v13.1 Funktion fehlt: ${name}`);
+}
+if (!html.includes('ARC v13.1 — Adaptive Training')) fail('ARC v13.1 Seitentitel fehlt');
+if (!html.includes('Session-RPE kommt erst beim Abschluss')) fail('ARC v13.1 reduzierte Workout-Eingabe fehlt');
+if (!html.includes('Einmaliger Check-in')) fail('ARC v13.1 Abschluss-Check-in fehlt');
+const v131Script = html.split('<script id="arc-v13-1-js">')[1]?.split('</script>')[0] || '';
+if (/id="woWell"|id="woPain"|id="woRpe"/.test(v131Script)) fail('Wohlbefinden/Schmerz/Session-RPE dürfen nicht im ARC v13.1 Workout-Overlay stehen');
+else ok('ARC v13.1: Abschlusswerte nur beim Trainingsende');
+if (!html.includes('+ Freies Training')) fail('Freies Training fehlt auf der Trainingsseite');
+else ok('ARC v13.1: Live-Workout-Bearbeitung vorhanden');
+
 if (failed) process.exit(1);
 console.log('\nARC-Validierung erfolgreich.');
