@@ -43,7 +43,7 @@ Der Supabase Publishable Key in `config.js` ist für den Browser bestimmt. Priva
 
 ## Aktueller Stand
 
-Basis: ARC v13.1. Die vorhandene Plattformfunktionalität wurde für die GitHub-Vorbereitung nicht fachlich umgebaut; ergänzt wurden Repository-, Deployment- und Validierungsdateien sowie das zuvor fehlende Web-App-Manifest.
+Basis: ARC v13.2. Die vorhandene Plattformfunktionalität wurde für die GitHub-Vorbereitung nicht fachlich umgebaut; ergänzt wurden Repository-, Deployment- und Validierungsdateien sowie das zuvor fehlende Web-App-Manifest.
 
 ## v12.3
 - Kraft-Ruderübungen (Kabel, Maschine, Langhantel, Kurzhantel) sind explizit Strength-Blöcke mit Sätzen/Wdh./RPE.
@@ -67,3 +67,11 @@ Basis: ARC v13.1. Die vorhandene Plattformfunktionalität wurde für die GitHub-
 - Session-RPE, Wohlbefinden und Schmerz werden ausschließlich einmal beim Beenden erfasst.
 - Optional können Live-Änderungen beim Abschluss in den zugrunde liegenden Plan übernommen werden.
 - Dashboard-Kennzahlen und Startseitenaktionen haben explizite Ziele; Erholungswerte öffnen einen Verlauf statt ein zusätzliches Check-in-Formular.
+
+
+## ARC v13.2
+- Distanzfelder erscheinen nur noch bei echten Strecken-/Ausdaueraktivitäten; Schwimmen/Rudern nutzen Meter, Lauf/Rad/Skaten/Wandern Kilometer.
+- Vor dem Start öffnet eine Trainingskarte eine vollständige Listenübersicht mit getrennten Blöcken.
+- Während des Trainings ist die gesamte Übungs-/Blockliste jederzeit über „Übersicht“ erreichbar und direkt anspringbar.
+- Gym, Laufen, Schwimmen, Rad, Skaten, Rudern, EMOM, CrossFit, Calisthenics, Reha und Mobility werden als getrennte Modalitätsblöcke eines Trainingstags gruppiert.
+- Der Planeditor kann verschiedene Modalitäten am selben Tag kombinieren; die Blockauswahl ist nicht mehr auf die Tages-Sportart beschränkt.

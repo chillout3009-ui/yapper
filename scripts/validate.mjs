@@ -136,7 +136,7 @@ const requiredV131 = [
 for (const name of requiredV131) {
   if (!html.includes(name)) fail(`ARC v13.1 Funktion fehlt: ${name}`);
 }
-if (!html.includes('ARC v13.1 — Adaptive Training')) fail('ARC v13.1 Seitentitel fehlt');
+if (!html.includes('ARC v13.2 — Adaptive Training')) fail('ARC v13.2 Seitentitel fehlt');
 if (!html.includes('Session-RPE kommt erst beim Abschluss')) fail('ARC v13.1 reduzierte Workout-Eingabe fehlt');
 if (!html.includes('Einmaliger Check-in')) fail('ARC v13.1 Abschluss-Check-in fehlt');
 const v131Script = html.split('<script id="arc-v13-1-js">')[1]?.split('</script>')[0] || '';
@@ -144,6 +144,32 @@ if (/id="woWell"|id="woPain"|id="woRpe"/.test(v131Script)) fail('Wohlbefinden/Sc
 else ok('ARC v13.1: Abschlusswerte nur beim Trainingsende');
 if (!html.includes('+ Freies Training')) fail('Freies Training fehlt auf der Trainingsseite');
 else ok('ARC v13.1: Live-Workout-Bearbeitung vorhanden');
+
+
+
+// ARC v13.2 modality/distance/overview regression checks
+const requiredV132 = [
+  'arcDistanceSpecForExercise',
+  'arcWorkoutSections',
+  'openWorkoutOverview',
+  'openActiveWorkoutOverview',
+  'renderArc132BlockPicker',
+  'updateManualDistanceVisibility'
+];
+for (const name of requiredV132) {
+  if (!html.includes(name)) fail(`ARC v13.2 Funktion fehlt: ${name}`);
+}
+const v132Script = html.split('<script id="arc-v13-2-js">')[1]?.split('</script>')[0] || '';
+if (!v132Script.includes("DISTANCE_SPORTS=new Set(['running','swimming','cycling','skating','rowing','hiking'])")) fail('ARC v13.2 Distanz-Sportliste fehlt');
+if (!v132Script.includes("sport==='swimming'||sport==='rowing")) fail('ARC v13.2 Meter-Einheiten für Schwimmen/Rudern fehlen');
+if (!v132Script.includes("Gym → Laufen → EMOM")) fail('ARC v13.2 Multi-Block-Planeditor fehlt');
+if (!v132Script.includes('openActiveWorkoutOverview()')) fail('ARC v13.2 Workout-Listenbutton fehlt');
+if (/renderWorkoutInterval=function\(b,bi\)\{return `[^`]*Distanz km/.test(v132Script)) fail('ARC v13.2 darf Distanz nicht pauschal als km rendern');
+else ok('ARC v13.2: Distanz nur kontextuell für Ausdauer');
+if (!v132Script.includes('openWorkoutOverview(w.pi,w.di)')) fail('ARC v13.2 Trainingskarten öffnen keine Übersicht');
+else ok('ARC v13.2: Listenübersicht vor und während des Trainings');
+if (!v132Script.includes('workoutSections(activeWorkout.blocks)')) fail('ARC v13.2 Live-Workout gruppiert keine Modalitätsblöcke');
+else ok('ARC v13.2: getrennte Modalitätsblöcke aktiv');
 
 if (failed) process.exit(1);
 console.log('\nARC-Validierung erfolgreich.');
