@@ -136,7 +136,7 @@ const requiredV131 = [
 for (const name of requiredV131) {
   if (!html.includes(name)) fail(`ARC v13.1 Funktion fehlt: ${name}`);
 }
-if (!html.includes('ARC v13.2 — Adaptive Training')) fail('ARC v13.2 Seitentitel fehlt');
+if (!html.includes('ARC v14 — Adaptive Training')) fail('ARC v14 Seitentitel fehlt');
 if (!html.includes('Session-RPE kommt erst beim Abschluss')) fail('ARC v13.1 reduzierte Workout-Eingabe fehlt');
 if (!html.includes('Einmaliger Check-in')) fail('ARC v13.1 Abschluss-Check-in fehlt');
 const v131Script = html.split('<script id="arc-v13-1-js">')[1]?.split('</script>')[0] || '';
@@ -170,6 +170,39 @@ if (!v132Script.includes('openWorkoutOverview(w.pi,w.di)')) fail('ARC v13.2 Trai
 else ok('ARC v13.2: Listenübersicht vor und während des Trainings');
 if (!v132Script.includes('workoutSections(activeWorkout.blocks)')) fail('ARC v13.2 Live-Workout gruppiert keine Modalitätsblöcke');
 else ok('ARC v13.2: getrennte Modalitätsblöcke aktiv');
+
+
+
+// ARC v14 training intelligence / detail navigation checks
+const requiredV14 = [
+  'openArc14Detail',
+  'showPostWorkoutSummary',
+  'startWorkoutSection',
+  'moveActiveWorkoutBlock',
+  'arc14ProgressionFor',
+  'shareArcSession',
+  'setArcBodyWeight'
+];
+for (const name of requiredV14) {
+  if (!html.includes(name)) fail(`ARC v14 Funktion fehlt: ${name}`);
+}
+if (!html.includes('id="insights"')) fail('ARC v14 Detailseite fehlt');
+if (!html.includes('Nur diesen Block starten')) fail('ARC v14 Einzelblock-Start fehlt');
+if (!html.includes('Letzte Leistung')) fail('ARC v14 letzte Kraftleistung fehlt');
+if (!html.includes('sportartspezifisches Tracking')) fail('ARC v14 sportartspezifische Live-Ansicht fehlt');
+if (!html.includes('Trainingsauswertung')) fail('ARC v14 Post-Workout-Auswertung fehlt');
+if (!html.includes('bewegtes Gewicht')) fail('ARC v14 Gym-Volumenauswertung fehlt');
+if (!html.includes('MET-basierte Kalorienschätzung')) fail('ARC v14 transparente Kalorienschätzung fehlt');
+if (!html.includes("openArc14Detail('diary')")) fail('ARC v14 Dashboard-Detailnavigation fehlt');
+else ok('ARC v14: Detailnavigation und Trainingstagebuch vorhanden');
+if (!html.includes('sourceBlockIndices')) fail('ARC v14 Teiltraining-Zuordnung fehlt');
+else ok('ARC v14: einzelne Modalitätsblöcke separat startbar');
+if (!html.includes('suggestedWeight')) fail('ARC v14 Progressionsvorschlag fehlt');
+else ok('ARC v14: letzte Leistung und Progression vorhanden');
+if (!html.includes('arc14-live-fields')) fail('ARC v14 sportartspezifische Live-Felder fehlen');
+else ok('ARC v14: sportartspezifische Live-Ansichten vorhanden');
+if (!html.includes('overflow-wrap:anywhere')) fail('ARC v14 Text-/Overlap-Schutz fehlt');
+else ok('ARC v14: responsive Text-/Overlap-Schutz vorhanden');
 
 if (failed) process.exit(1);
 console.log('\nARC-Validierung erfolgreich.');

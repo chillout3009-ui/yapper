@@ -43,7 +43,7 @@ Der Supabase Publishable Key in `config.js` ist für den Browser bestimmt. Priva
 
 ## Aktueller Stand
 
-Basis: ARC v13.2. Die vorhandene Plattformfunktionalität wurde für die GitHub-Vorbereitung nicht fachlich umgebaut; ergänzt wurden Repository-, Deployment- und Validierungsdateien sowie das zuvor fehlende Web-App-Manifest.
+Basis: ARC v14. Die vorhandene Plattformfunktionalität wurde für die GitHub-Vorbereitung nicht fachlich umgebaut; ergänzt wurden Repository-, Deployment- und Validierungsdateien sowie das zuvor fehlende Web-App-Manifest.
 
 ## v12.3
 - Kraft-Ruderübungen (Kabel, Maschine, Langhantel, Kurzhantel) sind explizit Strength-Blöcke mit Sätzen/Wdh./RPE.
@@ -75,3 +75,16 @@ Basis: ARC v13.2. Die vorhandene Plattformfunktionalität wurde für die GitHub-
 - Während des Trainings ist die gesamte Übungs-/Blockliste jederzeit über „Übersicht“ erreichbar und direkt anspringbar.
 - Gym, Laufen, Schwimmen, Rad, Skaten, Rudern, EMOM, CrossFit, Calisthenics, Reha und Mobility werden als getrennte Modalitätsblöcke eines Trainingstags gruppiert.
 - Der Planeditor kann verschiedene Modalitäten am selben Tag kombinieren; die Blockauswahl ist nicht mehr auf die Tages-Sportart beschränkt.
+
+
+## ARC v14
+- Startübersicht: Kennzahlen und Insights öffnen echte Detailansichten statt tote Kacheln.
+- Trainingsblöcke besitzen sportartspezifisches Live-Tracking für Gym, Lauf, Schwimmen, Rad, Rudern, EMOM/HIIT/CrossFit sowie Mobility/Reha.
+- Krafttraining zeigt letzte Satzleistungen direkt am Satz und deterministische Progressionsvorschläge.
+- Trainingsstart erlaubt den Start des gesamten Tages oder nur eines einzelnen Modalitätsblocks.
+- Laufende Workouts bleiben editierbar: Übungen hinzufügen/entfernen und Reihenfolge ändern.
+- Visuelles Trainingstagebuch, PR-Ansicht, Muskel-/Volumenanalyse und adaptive Wochenhinweise.
+- Nach dem Training öffnet eine sportartspezifische Auswertung mit Volumen, Sätzen, RPE, Erschöpfung, Distanz/Pace und optionaler MET-Kalorienschätzung.
+- Wearable-Bereich zeigt transparent den Integrationsstatus; ohne Provider-Authentifizierung wird kein Fake-Sync vorgetäuscht.
+- Private Sharing-Funktion über Web Share / Zwischenablage.
+- Zusätzliche Responsive-/Text-Fixes gegen Überlappungen und abgeschnittene Inhalte.
